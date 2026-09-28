@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Max's Page Tweaks",
+  "version": "1.0.0",
+  "description": "Enable small CSS and JavaScript tweaks on selected websites.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Max's Page Tweaks",
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html"
+}

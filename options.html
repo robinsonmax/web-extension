@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page Tweaks settings</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <main class="options">
+      <h1>Max's Page Tweaks</h1>
+      <p class="intro">
+        Choose which pages each tweak can run on. Use Chrome match patterns,
+        such as <code>https://*.example.com/*</code>.
+      </p>
+      <div id="feature-list" class="feature-list"></div>
+      <p id="status" class="status" aria-live="polite"></p>
+    </main>
+    <script type="module" src="dist/options.js"></script>
+  </body>
+</html>

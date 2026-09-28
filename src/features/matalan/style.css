@@ -1,0 +1,5 @@
+/* Add page-specific CSS here. */
+
+div#facet-sidebar {
+  background-color: blue;
+}
