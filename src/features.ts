@@ -38,16 +38,26 @@ export const DEFAULT_SETTINGS: FeatureSettings = Object.fromEntries(
 
 export function mergeSettings(stored: unknown): FeatureSettings {
   const saved = stored as Partial<FeatureSettings> | undefined;
-  return Object.fromEntries(FEATURES.map((feature) => {
-    const setting = saved?.[feature.id];
-    const oldMatchSet = feature.migrateMatchesFrom?.some((oldMatches) =>
-      setting?.matches.length === oldMatches.length &&
-      oldMatches.every((pattern, index) => setting.matches[index] === pattern),
-    );
-    return [feature.id, {
-      ...DEFAULT_SETTINGS[feature.id],
-      ...setting,
-      matches: oldMatchSet ? feature.matches : setting?.matches ?? feature.matches,
-    }];
-  }));
+  return Object.fromEntries(
+    FEATURES.map((feature) => {
+      const setting = saved?.[feature.id];
+      const oldMatchSet = feature.migrateMatchesFrom?.some(
+        (oldMatches) =>
+          setting?.matches.length === oldMatches.length &&
+          oldMatches.every(
+            (pattern, index) => setting.matches[index] === pattern,
+          ),
+      );
+      return [
+        feature.id,
+        {
+          ...DEFAULT_SETTINGS[feature.id],
+          ...setting,
+          matches: oldMatchSet
+            ? feature.matches
+            : (setting?.matches ?? feature.matches),
+        },
+      ];
+    }),
+  );
 }

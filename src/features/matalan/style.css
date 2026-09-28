@@ -1,5 +1,11 @@
 /* Add page-specific CSS here. */
 
-div#facet-sidebar {
-  background-color: blue;
+#facet-sidebar {
+  transition-property: opacity;
+  transition-duration: 0.2s;
+}
+
+#facet-sidebar.scrolled {
+  opacity: 0;
+  pointer-events: none;
 }
