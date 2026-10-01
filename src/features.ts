@@ -4,8 +4,6 @@ export interface Feature {
   description: string;
   matches: string[];
   migrateMatchesFrom?: string[][];
-  css?: string;
-  js?: string;
 }
 
 export interface FeatureSetting {
@@ -24,8 +22,6 @@ export const FEATURES: Feature[] = [
     description: "Hide's the matalan searchbar",
     matches: ["https://*.matalan.co.uk/*"],
     migrateMatchesFrom: [["https://matalan.co.uk/*"]],
-    css: "dist/features/matalan/style.css",
-    js: "dist/features/matalan/content.js",
   },
 ];
 

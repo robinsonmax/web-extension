@@ -14,11 +14,15 @@ function urlMatchesPattern(urlString: string, pattern: string): boolean {
     const hostPattern = slash === -1 ? rest : rest.slice(0, slash);
     const pathPattern = slash === -1 ? "/*" : rest.slice(slash);
     if (scheme !== "*" && `${scheme}:` !== url.protocol) return false;
-    const hostOk = hostPattern === "*" ||
+    const hostOk =
+      hostPattern === "*" ||
       (hostPattern.startsWith("*.")
-        ? url.hostname === hostPattern.slice(2) || url.hostname.endsWith(`.${hostPattern.slice(2)}`)
+        ? url.hostname === hostPattern.slice(2) ||
+          url.hostname.endsWith(`.${hostPattern.slice(2)}`)
         : url.hostname === hostPattern);
-    const pathRegex = new RegExp(`^${pathPattern.split("*").map(escapeRegex).join(".*")}$`);
+    const pathRegex = new RegExp(
+      `^${pathPattern.split("*").map(escapeRegex).join(".*")}$`,
+    );
     return hostOk && pathRegex.test(url.pathname);
   } catch {
     return false;
@@ -29,21 +33,40 @@ function escapeRegex(value: string): string {
   return value.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
 }
 
-async function injectForTab(tabId: number, url: string | undefined): Promise<void> {
+async function injectForTab(
+  tabId: number,
+  url: string | undefined,
+): Promise<void> {
   if (!url || !/^https?:/.test(url)) return;
   const settings = await getSettings();
   for (const feature of FEATURES) {
     const setting = settings[feature.id];
     const matches = setting?.matches ?? feature.matches;
-    if (!setting?.enabled || !matches.some((pattern) => urlMatchesPattern(url, pattern))) continue;
+
+    if (
+      !setting?.enabled ||
+      !matches.some((pattern) => urlMatchesPattern(url, pattern))
+    )
+      continue;
     try {
-      const origins = matches.filter((pattern) => urlMatchesPattern(url, pattern));
-      if (!await chrome.permissions.contains({ origins })) {
-        console.warn(`Missing site access for ${url}; update and save the feature's match patterns in extension settings.`);
+      const origins = matches.filter((pattern) =>
+        urlMatchesPattern(url, pattern),
+      );
+      if (!(await chrome.permissions.contains({ origins }))) {
+        console.warn(
+          `Missing site access for ${url}; update and save the feature's match patterns in extension settings.`,
+        );
         continue;
       }
-      if (feature.css) await chrome.scripting.insertCSS({ target: { tabId }, files: [feature.css] });
-      if (feature.js) await chrome.scripting.executeScript({ target: { tabId }, files: [feature.js] });
+      await chrome.scripting.insertCSS({
+        target: { tabId },
+        files: [`dist/features/${feature.id}/style.css`],
+      });
+
+      await chrome.scripting.executeScript({
+        target: { tabId },
+        files: [`dist/features/${feature.id}/index.js`],
+      });
       console.info(`Injected ${feature.id} into ${url}`);
     } catch (error) {
       console.warn(`Could not inject ${feature.id}:`, error);
